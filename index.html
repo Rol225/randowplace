@@ -65,7 +65,7 @@
         const selectorCities = new SelectorInput(document.getElementById("citySelect"), document.getElementById('browsers'));
 
         randomPlace.getAllCities().then(r => {
-            // spinner.hide();
+            spinner.hide();
             randomPlace._allCities = Array.isArray(r) ? r : [];
             selectorCities.fillDataList(randomPlace.allCities);
             selectorCities.input.addEventListener('change', async event => {
