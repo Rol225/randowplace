@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="map.js"></script>
+    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="spinner.css">
+    <title>Document</title>
+</head>
+<body>
+<main>
+    <div class="spinner active spinner__background-animation spinner-js">
+        <div class="loader"></div>
+        <div class="spinner__title"></div>
+    </div>
+
+    <div class="search">
+        <input type="text" list="browsers" id="citySelect" name="citySelect" placeholder="Выбери город...">
+        <datalist id="browsers"></datalist>
+        <button type="button" id="search" name="search">
+            <svg fill="#FFFF" height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve">
+                <path d="M270.746,117.149c-20.516-20.514-47.79-31.812-76.802-31.811c-12.854,0-23.273,10.42-23.273,23.273
+                    c0.002,12.854,10.42,23.273,23.274,23.273c16.578,0,32.163,6.454,43.886,18.178c11.723,11.723,18.178,27.308,18.178,43.885
+                    c-0.002,12.853,10.418,23.274,23.271,23.274c0.002,0,0.002,0,0.002,0c12.851,0,23.271-10.418,23.273-23.271
+                    C302.556,164.939,291.26,137.663,270.746,117.149z"/>
+                <path d="M505.183,472.272L346.497,313.586c25.921-32.979,41.398-74.536,41.398-119.639C387.894,87.005,300.89,0,193.946,0
+                    c-0.003,0,0,0-0.003,0C142.14,0,93.434,20.175,56.806,56.804C20.173,93.437,0,142.141,0,193.947
+                    C0,300.89,87.004,387.894,193.946,387.894c45.103,0,86.661-15.476,119.639-41.396L472.27,505.184
+                    c4.544,4.544,10.501,6.816,16.457,6.816c5.956,0,11.913-2.271,16.455-6.817C514.273,496.096,514.273,481.359,505.183,472.272z
+                     M193.946,341.349c-81.276,0-147.4-66.124-147.4-147.402c0-39.373,15.332-76.389,43.172-104.229
+                    c27.84-27.842,64.855-43.172,104.228-43.172c81.279,0,147.403,66.124,147.403,147.402S275.225,341.349,193.946,341.349z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div id="address">Выбери город для генерации случайного адреса.</div>
+    <a class="btn" id="mapLink" href="#" target="_blank">Посмотреть на Яндекс.Картах</a>
+
+    <div id="map"></div>
+</main>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=ba170537-4832-4c04-b408-7e1eec823ec3&suggest_apikey=f1b79352-0f3f-4747-8488-dc8478e3be4c"></script>
+
+<script>
+    let map = null;
+    let spinner = null;
+
+    document.addEventListener('DOMContentLoaded', event => {
+        initSpinner();
+        initRandomPlace();
+        initMap();
+    });
+
+    function initRandomPlace() {
+        const addressPlace = document.getElementById('address');
+        const mapLink = document.getElementById('mapLink')
+
+        const randomPlace = new RandomPlace({
+            yandexMapApiKey: 'ba170537-4832-4c04-b408-7e1eec823ec3',
+        });
+        const selectorCities = new SelectorInput(document.getElementById("citySelect"), document.getElementById('browsers'));
+
+        randomPlace.getAllCities().then(r => {
+            // spinner.hide();
+            randomPlace._allCities = Array.isArray(r) ? r : [];
+            selectorCities.fillDataList(randomPlace.allCities);
+            selectorCities.input.addEventListener('change', async event => {
+                const value = selectorCities.checkInput();
+                if (!value) return;
+                spinner.changeText([["Я ищу..", "твой сраный адрес!"], ["Я когда то под стол пешком ходил..", "О, вижу у тебя до сих пор с этим нет проблем!"], ["Можешь сосать стоя ахахххаахха"], ["Будь добра..", "слей яда!"], ["Где твой ошейник рыжик?)"], ["Блин..", "у тебя упало..", "А нет, это просто ты :)"]]);
+                spinner.show();
+                randomPlace.getRandomAddress(value).then(result => {
+                    addressPlace.innerText = result.address;
+                    mapLink.classList.add('active');
+                    mapLink.href = result.yandexMapLink;
+                    map.searchPlace(result.address);
+                    spinner.hide();
+                    console.log(result)
+                }, error => {
+                    console.log('error', error);
+                    spinner.hide();
+                });
+            });
+        });
+    }
+
+    function initMap() {
+        const setting = {
+            "center": [
+                "55",
+                "37"
+            ],
+            "zoom": "10",
+            "scrollMap": false,
+            "controls": []
+        };
+        map = new YandexMap("map", {
+            placeMarks: [],
+            settings: setting,
+        });
+        map.createMap().then((res) => {
+            // console.log(res._geolocation)
+        });
+    }
+
+    function initSpinner() {
+        spinner = new Spinner(document.querySelector('.spinner-js'));
+        spinner.changeText([["В тебе есть все функции как у микроволновки..", "маленькая и проста в использовании :з"], ["Недавно подшутил над карликом..", "это было так низко."], ["Рыжий рыжий..", "А точно..", "ты просто лох :)"]]);
+    }
+</script>
+
+</body>
+</html>

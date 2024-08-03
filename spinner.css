@@ -1,0 +1,123 @@
+/*spinner*/
+:root{
+    --spinner-loader-first-color: #FFF;
+    --spinner-loader-second-color: rgb(227, 6, 19);
+    --spinner-background-1: #000000;
+    --spinner-background-2: #009a9a;
+    --spinner-background-3: #9f9f9f;
+    --spinner-background-4: #009a9a;
+    --spinner-background-5: #000000;
+}
+.spinner {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    background: #30363ae3;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 5 !important;
+}
+.spinner.on-container{
+    position: absolute !important;
+}
+.spinner__background-animation {
+    background: linear-gradient(91deg, var(--spinner-background-1), var(--spinner-background-2), var(--spinner-background-3), var(--spinner-background-4), var(--spinner-background-5));
+    background-size: 1000% 1000%;
+    -webkit-animation: spinnerBackground 29s ease infinite;
+    -moz-animation: spinnerBackground 29s ease infinite;
+    -o-animation: spinnerBackground 29s ease infinite;
+    animation: spinnerBackground 29s ease infinite;
+}
+.spinner.active{
+    display: flex;
+}
+.spinner .loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    border: 3px solid;
+    border-color: var(--spinner-loader-first-color) var(--spinner-loader-first-color) transparent transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+.spinner .loader::after,
+.spinner .loader::before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border: 3px solid;
+    border-color: transparent transparent var(--spinner-loader-second-color) var(--spinner-loader-second-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: rotationBack 0.5s linear infinite;
+    transform-origin: center center;
+}
+.spinner .loader::before {
+    width: 32px;
+    height: 32px;
+    border-color: var(--spinner-loader-first-color) var(--spinner-loader-first-color) transparent transparent;
+    animation: rotation 1.5s linear infinite;
+}
+.spinner__title {
+    position: absolute;
+    font-size: 30px;
+    top: 111px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 5;
+    width: fit-content;
+    height: fit-content;
+    color: #ffffff75;
+    text-align: center;
+}
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotationBack {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@-webkit-keyframes spinnerBackground {
+    0%{background-position:0% 49%}
+    50%{background-position:100% 52%}
+    100%{background-position:0% 49%}
+}
+@-moz-keyframes spinnerBackground {
+    0%{background-position:0% 49%}
+    50%{background-position:100% 52%}
+    100%{background-position:0% 49%}
+}
+@-o-keyframes spinnerBackground {
+    0%{background-position:0% 49%}
+    50%{background-position:100% 52%}
+    100%{background-position:0% 49%}
+}
+@keyframes spinnerBackground {
+    0%{background-position:0% 49%}
+    50%{background-position:100% 52%}
+    100%{background-position:0% 49%}
+}
